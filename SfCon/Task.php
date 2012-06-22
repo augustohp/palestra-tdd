@@ -6,6 +6,13 @@ class Task
     protected $id;
     protected $title;
     protected $done = false;
+    protected $pdo;
+
+    public function __construct(\Pdo $pdo=null)
+    {
+        if (!is_null($pdo))
+            $this->pdo = $pdo;
+    }
 
     public function setId($int)
     {
@@ -43,5 +50,16 @@ class Task
     public function isDone()
     {
         return $this->done;
+    }
+
+    public function insert()
+    {
+        $st = $this->pdo->prepare('INSERT INTO tasks (id, title, done) VALUES (?, ?, ?)');
+        $st->bindValue(1, $this->getId());
+        $st->bindValue(2, $this->getTitle());
+        $st->bindValue(3, $this->isDone());
+        $result = $st->execute();
+        $this->setId($this->pdo->lastInsertId());
+        return $result;
     }
 }
