@@ -1,4 +1,6 @@
 <?php
+require 'SfCon/Task.php';
+
 class TaskTest extends PHPUnit_Framework_TestCase
 {
     public function testTitle()
