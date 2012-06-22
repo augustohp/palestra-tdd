@@ -3,7 +3,7 @@ class TaskTest extends PHPUnit_Framework_TestCase
 {
     public function testTitle()
     {
-        $task  = new Task;
+        $task  = new SfCon\Task;
         $title = 'Teste';
         $task->setTitle($title);
         $this->assertEquals($title, $task->getTitle());
