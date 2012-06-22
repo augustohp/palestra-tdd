@@ -3,7 +3,20 @@ namespace SfCon;
 
 class Task
 {
+    protected $id;
     protected $title;
+    protected $done = false;
+
+    public function setId($int)
+    {
+        $this->id = $int;
+        return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function setTitle($string)
     {
@@ -19,5 +32,16 @@ class Task
     public function __toString()
     {
         return (string) $this->getTitle();
+    }
+
+    public function setDone($bool=true)
+    {
+        $this->done = (boolean) $bool;
+        return $this;
+    }
+
+    public function isDone()
+    {
+        return $this->done;
     }
 }
