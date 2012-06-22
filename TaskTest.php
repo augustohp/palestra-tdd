@@ -3,7 +3,7 @@ require 'SfCon/Task.php';
 
 class TaskTest extends PHPUnit_Framework_TestCase
 {
-    public function testTitle()
+    public function testSetterGetterForTitle()
     {
         $task  = new SfCon\Task;
         $title = 'Teste';
@@ -12,7 +12,7 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($title, (string) $task);
     }
 
-    public function testId()
+    public function testSetterGetterForId()
     {
         $task = new SfCon\Task();
         $id   = 1;
@@ -20,7 +20,7 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($id, $task->getId());
     }
 
-    public function testDone()
+    public function testSetterGetterForDone()
     {
         $task = new SfCon\Task();
         $this->assertFalse($task->isDone());
@@ -29,7 +29,7 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $task->setDone(false);
         $this->assertFalse($task->isDone());
     }
-    
+
     public function testInsert()
     {
         $pdo = new Pdo('sqlite::memory:');
