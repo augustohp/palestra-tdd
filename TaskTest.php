@@ -29,4 +29,24 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $task->setDone(false);
         $this->assertFalse($task->isDone());
     }
+    
+    public function testInsert()
+    {
+        $pdo = new Pdo('sqlite::memory:');
+        $pdo->exec('CREATE TABLE tasks (
+            id INTEGER PRIMARY KEY,
+            title TEXT,
+            done INTEGER
+        )');
+        $task = new SfCon\Task($pdo);
+        $expectId = 1;
+        $task->setTitle('Test');
+        $task->insert(); // Inserts must define ID into the object
+        $this->assertEquals($expectId, $task->getId());
+        $st = $pdo->prepare('SELECT id FROM tasks');
+        $st->execute();
+        $all = $st->fetchAll(\PDO::FETCH_ASSOC);
+        $this->assertEquals(1, count($all));
+        $this->assertContains($expectId, array_shift($all));
+    }
 }
