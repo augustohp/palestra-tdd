@@ -18,7 +18,7 @@ class Task
 
     public function setId($int)
     {
-        if (!is_int($int))
+        if (!is_int($int) || $int <= 0)
             throw new \InvalidArgumentException('Id must be a valid int');
 
         $this->id = $int;
