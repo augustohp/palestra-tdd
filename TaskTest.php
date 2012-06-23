@@ -38,7 +38,8 @@ class TaskTest extends PHPUnit_Framework_TestCase
      */
     public function testSetterGetterForTitle($title)
     {
-        $this->fixture->setTitle($title);
+        $instance = $this->fixture->setTitle($title);   // Returns the object
+        $this->assertEquals($this->fixture, $instance); // Test object instance
         $this->assertEquals($title, $this->fixture->getTitle());
         $this->assertEquals($title, (string) $this->fixture);
     }
@@ -57,14 +58,16 @@ class TaskTest extends PHPUnit_Framework_TestCase
      */
     public function testSetterGetterForId($id)
     {
-        $this->fixture->setId($id);
+        $instance = $this->fixture->setId($id);         // Returns the object
+        $this->assertEquals($this->fixture, $instance); // Test object instance
         $this->assertEquals($id, $this->fixture->getId());
     }
 
     public function testSetterGetterForDone()
     {
         $this->assertFalse($this->fixture->isDone());
-        $this->fixture->setDone(); // Default: true
+        $instance = $this->fixture->setDone();          // Default: true, returns the object
+        $this->assertEquals($this->fixture, $instance); // Test object instance
         $this->assertTrue($this->fixture->isDone());
         $this->fixture->setDone(false);
         $this->assertFalse($this->fixture->isDone());
