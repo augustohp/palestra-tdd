@@ -8,18 +8,7 @@ class TaskTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->pdo     = new Pdo('sqlite::memory:');
-        $this->fixture = new SfCon\Task($this->pdo);
-        $this->pdo->exec('CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY,
-            title TEXT,
-            done INTEGER
-        )');
-    }
-
-    public function tearDown()
-    {
-        $this->pdo->exec('DROP TABLE tasks');
+        $this->fixture = new SfCon\Task();
     }
 
     public function provideValidTitles()
@@ -78,16 +67,63 @@ class TaskTest extends PHPUnit_Framework_TestCase
      */
     public function testInsert($title)
     {
+        // Mocking / Stubing
         $expectId = 1;
+        $mockIns = $this->getMock('PdoStatement', array('bindValue', 'execute'));
+        $mockIns->expects($this->exactly(3))
+                ->method('bindValue')
+                ->with($this->greaterThan(0), $this->anything());
+
+        $mockIns->expects($this->once())
+                ->method('execute')
+                ->will($this->returnValue(true));
+
+        $this->pdo = $this->getMock('Pdo', array('prepare', 'lastInsertId'), array('sqlite::memory:'));
+        $this->pdo->expects($this->once())
+                  ->method('prepare')
+                  ->with($this->equalTo(SfCon\Task::SQL_INSERT))
+                  ->will($this->returnValue($mockIns));
+
+        $this->pdo->expects($this->once())
+                  ->method('lastInsertId')
+                  ->will($this->returnValue(1));
+
+        $this->fixture = new SfCon\Task($this->pdo);
         $this->fixture->setTitle($title);
         $this->fixture->insert(); // Inserts must define ID into the object
         $this->assertEquals($expectId, $this->fixture->getId());
-        $st = $this->pdo->prepare('SELECT id, title FROM tasks');
-        $st->execute();
-        $all = $st->fetchAll(\PDO::FETCH_ASSOC);
+        
+    }
+
+    public function testSelectWithoutWhere()
+    {
+        $this->markTestIncomplete('Implementar método SfCon\Task::fetchAll()');
+        $expectId   = 1;
+        $expecTitle = 'Uha!';
+        $stubTask = new SfCon\Task();
+        $stubTask->setId($expectId)->setTitle($expecTitle);
+
+        $mockSel = $this->getMock('PdoStatement', array('fetchAll'));
+        $mockSel->expects($this->once())
+                ->method('fetchAll')
+                ->will($this->returnValue(array($stubTask)));
+
+        $this->pdo = $this->getMock('Pdo', array('prepare'), array('sqlite::memory:'));
+        $this->pdo->expects($this->once())
+                  ->method('prepare')
+                  ->with($this->equalTo(SfCon\Task::SQL_FETCHALL))
+                  ->will($this->returnValue($mockSel));
+
+        $this->pdo->expects($this->any())
+                  ->method('prepare')
+                  ->with($this->equalTo(SfCon\Task::SQL_FETCHALL))
+                  ->will($this->returnValue($mockSel));
+
+        $this->fixture = new SfCon\Task($this->pdo);
+        $all = $this->fixture->fetchAll();
         $this->assertEquals(1, count($all));
         $one = array_shift($all);
         $this->assertContains($expectId, $one);
-        $this->assertContains($title, $one);
+        $this->assertContains($expecTitle, $one);
     }
 }

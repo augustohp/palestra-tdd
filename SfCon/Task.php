@@ -3,6 +3,8 @@ namespace SfCon;
 
 class Task
 {
+    const SQL_INSERT = 'INSERT INTO tasks (id, title, done) VALUES (?, ?, ?)';
+    const SQL_FETCHALL = 'SELECT id, title FROM tasks'; 
     protected $id;
     protected $title;
     protected $done = false;
@@ -54,7 +56,7 @@ class Task
 
     public function insert()
     {
-        $st = $this->pdo->prepare('INSERT INTO tasks (id, title, done) VALUES (?, ?, ?)');
+        $st = $this->pdo->prepare(self::SQL_INSERT);
         $st->bindValue(1, $this->getId());
         $st->bindValue(2, $this->getTitle());
         $st->bindValue(3, $this->isDone());
