@@ -17,17 +17,46 @@ class TaskTest extends PHPUnit_Framework_TestCase
         )');
     }
 
-    public function testSetterGetterForTitle()
+    public function tearDown()
     {
-        $title = 'Teste';
+        $this->pdo->exec('DROP TABLE tasks');
+    }
+
+    public function provideValidTitles()
+    {
+        return array(
+            array('This is a valid title'),
+            array('This is also a valid title ...'),
+            array('Hello World'),
+            array('Hakuna Matata'),
+            array('Do some more tests')
+        );
+    }
+
+    /**
+     * @dataProvider provideValidTitles
+     */
+    public function testSetterGetterForTitle($title)
+    {
         $this->fixture->setTitle($title);
         $this->assertEquals($title, $this->fixture->getTitle());
         $this->assertEquals($title, (string) $this->fixture);
     }
 
-    public function testSetterGetterForId()
+    public function provideValidIds()
     {
-        $id   = 1;
+        return array(
+            array(1),
+            array(9),
+            array(\PHP_INT_MAX),
+        );
+    }
+
+    /**
+     * @dataProvider provideValidIds
+     */
+    public function testSetterGetterForId($id)
+    {
         $this->fixture->setId($id);
         $this->assertEquals($id, $this->fixture->getId());
     }
@@ -41,16 +70,21 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->fixture->isDone());
     }
 
-    public function testInsert()
+    /**
+     * @dataProvider provideValidTitles
+     */
+    public function testInsert($title)
     {
         $expectId = 1;
-        $this->fixture->setTitle('Test');
+        $this->fixture->setTitle($title);
         $this->fixture->insert(); // Inserts must define ID into the object
         $this->assertEquals($expectId, $this->fixture->getId());
-        $st = $this->pdo->prepare('SELECT id FROM tasks');
+        $st = $this->pdo->prepare('SELECT id, title FROM tasks');
         $st->execute();
         $all = $st->fetchAll(\PDO::FETCH_ASSOC);
         $this->assertEquals(1, count($all));
-        $this->assertContains($expectId, array_shift($all));
+        $one = array_shift($all);
+        $this->assertContains($expectId, $one);
+        $this->assertContains($title, $one);
     }
 }
