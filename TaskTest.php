@@ -97,11 +97,9 @@ class TaskTest extends PHPUnit_Framework_TestCase
 
     public function testSelectWithoutWhere()
     {
-        $this->markTestIncomplete('Implementar método SfCon\Task::fetchAll()');
         $expectId   = 1;
         $expecTitle = 'Uha!';
-        $stubTask = new SfCon\Task();
-        $stubTask->setId($expectId)->setTitle($expecTitle);
+        $stubTask   = array('id'=>$expectId, 'title'=>$expecTitle, 'done'=>false);
 
         $mockSel = $this->getMock('PdoStatement', array('fetchAll'));
         $mockSel->expects($this->once())
@@ -114,13 +112,8 @@ class TaskTest extends PHPUnit_Framework_TestCase
                   ->with($this->equalTo(SfCon\Task::SQL_FETCHALL))
                   ->will($this->returnValue($mockSel));
 
-        $this->pdo->expects($this->any())
-                  ->method('prepare')
-                  ->with($this->equalTo(SfCon\Task::SQL_FETCHALL))
-                  ->will($this->returnValue($mockSel));
-
-        $this->fixture = new SfCon\Task($this->pdo);
-        $all = $this->fixture->fetchAll();
+        $task = new SfCon\Task($this->pdo);
+        $all = $task->fetchAll();
         $this->assertEquals(1, count($all));
         $one = array_shift($all);
         $this->assertContains($expectId, $one);

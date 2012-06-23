@@ -64,4 +64,11 @@ class Task
         $this->setId($this->pdo->lastInsertId());
         return $result;
     }
+
+    public function fetchAll()
+    {
+        $st = $this->pdo->prepare(self::SQL_FETCHALL);
+        $st->execute();
+        return $st->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
