@@ -33,6 +33,13 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($title, (string) $this->fixture);
     }
 
+    public function testSetInvalidTitle()
+    {
+        $title = '';
+        $this->setExpectedException('InvalidArgumentException');
+        $this->fixture->setTitle($title);
+    }
+
     public function provideValidIds()
     {
         return array(
@@ -50,6 +57,13 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $instance = $this->fixture->setId($id);         // Returns the object
         $this->assertEquals($this->fixture, $instance); // Test object instance
         $this->assertEquals($id, $this->fixture->getId());
+    }
+
+    public function testSetInvalidId()
+    {
+        $id = \PHP_INT_MAX+1;
+        $this->setExpectedException('InvalidArgumentException');
+        $this->fixture->setId($id);
     }
 
     public function testSetterGetterForDone()
