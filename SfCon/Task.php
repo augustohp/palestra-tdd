@@ -18,6 +18,9 @@ class Task
 
     public function setId($int)
     {
+        if (!is_int($int))
+            throw new \InvalidArgumentException('Id must be a valid int');
+
         $this->id = $int;
         return $this;
     }
@@ -29,6 +32,9 @@ class Task
 
     public function setTitle($string)
     {
+        if (empty($string) || !is_string($string))
+            throw new \InvalidArgumentException('Title must be a non empty string');
+
         $this->title = $string;
         return $this;
     }
