@@ -59,9 +59,21 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($id, $this->fixture->getId());
     }
 
-    public function testSetInvalidId()
+    public function provideInvalidIds()
     {
-        $id = \PHP_INT_MAX+1;
+        return array(
+            array(null),
+            array(0),
+            array(\PHP_INT_MAX+1),
+            array(1.0)
+        );
+    }
+
+    /**
+     * @dataProvider provideInvalidIds
+     */
+    public function testSetInvalidId($id)
+    {
         $this->setExpectedException('InvalidArgumentException');
         $this->fixture->setId($id);
     }
